@@ -1,14 +1,13 @@
-const http = require('http');
+const chokidar = require('chokidar');
+const path = require("path")
 
-const hostname = '127.0.0.1';
-const port = 3000;
+console.log(path.basename(__dirname))
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello World');
-});
+var watcher = chokidar.watch('IRF_FILES', {ignored: /^\./, ignoreInitial: true, persistent: true });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+watcher
+  .on('ready', () =>  {console.log("Files are being watched for change..")})
+  .on('add', path =>  {console.log('File', path, 'has been added');})
+  .on('change', path =>  {console.log('File', path, 'has been changed');})
+  .on('unlink', path =>  {console.log('File', path, 'has been removed');})
+  .on('error', error =>  {console.error('Error happened', error);})
